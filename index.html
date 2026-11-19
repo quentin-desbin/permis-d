@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permis D — Entraînement Fiches Écrites 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+    }
+    .card-shadow {
+      box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 10px -3px rgba(15, 23, 42, 0.03);
+    }
+    .fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <button onclick="goHome()" class="flex items-center gap-2.5 text-left group focus:outline-none">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-sm group-hover:scale-105 transition-transform">
+          D
+        </div>
+        <div>
+          <span class="font-bold text-slate-900 tracking-tight text-base sm:text-lg block leading-none">Objectif Permis D</span>
+          <span class="text-[11px] font-medium text-slate-500">Fiches écrites 2026</span>
+        </div>
+      </button>
+
+      <div id="header-right" class="flex items-center gap-3">
+        <span id="global-progress-badge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+          <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+          <span id="completed-count">0</span>/20 fiches révisées
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+
+    <!-- ==================== VUE 1 : ACCUEIL ==================== -->
+    <section id="view-home" class="fade-in space-y-6">
+      <!-- Hero Card -->
+      <div class="bg-white rounded-3xl p-6 sm:p-10 card-shadow border border-slate-100">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-4">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Conditions réelles d'examen • 10 questions par fiche
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+          Révisez vos fiches écrites du Permis D du tac au tac
+        </h1>
+        <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl mb-8">
+          Tirez une fiche complète au hasard parmi les 20 fiches officielles. Le numéro de la fiche reste masqué pendant l'épreuve afin de vous entraîner sans indice, comme le jour J.
+        </p>
+
+        <!-- Mode Selector -->
+        <div class="mb-8">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Choisissez votre mode d'entraînement</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Mode Tac au tac (Default) -->
+            <button type="button" id="btn-mode-tac" onclick="selectMode('tac')" class="text-left p-4 sm:p-5 rounded-2xl border-2 border-blue-600 bg-blue-50/40 transition-all relative">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-slate-900 text-base flex items-center gap-2">
+                  ⚡ Mode Examen (Tac au tac)
+                </span>
+                <span id="badge-tac" class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md bg-blue-600 text-white">Actif</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-600 leading-snug">
+                Sans QCM. Formulez votre réponse à l'oral ou saisissez un mot-clé rapide, puis validez l'ensemble des 10 questions à la fin.
+              </p>
+            </button>
+
+            <!-- Mode QCM -->
+            <button type="button" id="btn-mode-qcm" onclick="selectMode('qcm')" class="text-left p-4 sm:p-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all relative">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-slate-900 text-base flex items-center gap-2">
+                  🎯 Mode Entraînement (QCM)
+                </span>
+                <span id="badge-qcm" class="hidden text-[11px] font-bold uppercase px-2 py-0.5 rounded-md bg-indigo-600 text-white">Actif</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-600 leading-snug">
+                4 propositions par question pour mémoriser les notions clés, avec bilan complet après la 10ème question.
+              </p>
+            </button>
+          </div>
+        </div>
+
+        <!-- Options secondaires -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100 mb-8">
+          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+            <input type="checkbox" id="opt-timer" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300" />
+            <span class="text-sm font-medium text-slate-700">Afficher le chronomètre pendant l'épreuve</span>
+          </label>
+
+          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+            <input type="checkbox" id="opt-shuffle-q" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300" />
+            <span class="text-sm font-medium text-slate-700">Mélanger l'ordre des 10 questions</span>
+          </label>
+        </div>
+
+        <!-- Primary CTA -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button onclick="startRandomSheet()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-base shadow-lg shadow-blue-600/20 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Tirer une fiche au hasard
+          </button>
+
+          <button id="btn-reset-history" onclick="resetHistory()" class="hidden px-4 py-3.5 rounded-2xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium text-sm transition-colors">
+            Réinitialiser ma progression (<span id="reset-count">0</span>/20)
+          </button>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 card-shadow">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-3">20</div>
+          <h3 class="font-bold text-slate-900 text-sm mb-1">Fiches complètes</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">L'intégralité des 200 questions officielles avec panneaux routiers illustrés.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 card-shadow">
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold mb-3">10</div>
+          <h3 class="font-bold text-slate-900 text-sm mb-1">Validation groupée</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Enchaînez les 10 questions sans interruption avant de découvrir votre score.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-100 card-shadow">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-3">✓</div>
+          <h3 class="font-bold text-slate-900 text-sm mb-1">Correction intelligente</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Tolérance orthographique et possibilité d'ajuster votre auto-évaluation orale.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VUE 2 : ÉPREUVE (10 QUESTIONS) ==================== -->
+    <section id="view-quiz" class="hidden fade-in space-y-5">
+      <!-- Top Bar Progression -->
+      <div class="bg-white rounded-2xl p-4 sm:px-6 border border-slate-100 card-shadow">
+        <div class="flex items-center justify-between gap-4 mb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-bold text-slate-900">Question <span id="q-current-num" class="text-blue-600">1</span> / 10</span>
+            <span id="quiz-mode-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700">Tac au tac</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div id="timer-display" class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="timer-text">00:00</span>
+            </div>
+            <button onclick="confirmQuit()" class="text-xs font-semibold text-slate-400 hover:text-rose-600 transition-colors px-2 py-1">
+              Quitter
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-300" style="width: 10%"></div>
+        </div>
+
+        <!-- Question Dots Navigation -->
+        <div id="q-dots" class="flex items-center justify-between gap-1.5 mt-3 pt-2"></div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="bg-white rounded-3xl p-6 sm:p-9 border border-slate-100 card-shadow">
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+          <div class="flex-1 space-y-4">
+            <h2 id="question-text" class="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+              Chargement de la question...
+            </h2>
+          </div>
+
+          <!-- Road Sign SVG Container -->
+          <div id="sign-container" class="hidden shrink-0 mx-auto md:mx-0 p-3 bg-slate-50 rounded-2xl border border-slate-200/70 flex items-center justify-center">
+          </div>
+        </div>
+
+        <!-- Area Tac au tac -->
+        <div id="area-tac" class="mt-7 pt-6 border-t border-slate-100 space-y-3">
+          <label for="tac-input" class="block text-xs font-bold uppercase tracking-wider text-slate-400">
+            Votre réponse (saisie libre ou laissez vide pour répondre à l'oral)
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              id="tac-input"
+              autocomplete="off"
+              placeholder="Ex : Faux, 80 km/h, Oui, 112, Attestation d'aménagement..."
+              class="w-full px-4 py-3.5 rounded-2xl border-2 border-slate-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 outline-none text-base font-medium text-slate-900 placeholder:text-slate-400 transition-all"
+            />
+            <button type="button" id="btn-clear-input" onclick="clearCurrentInput()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+              ✕
+            </button>
+          </div>
+          <p class="text-xs text-slate-400 flex items-center gap-1.5">
+            <span>Astuce : appuyez sur <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[11px] font-semibold text-slate-600">Entrée</kbd> pour passer directement à la question suivante.</span>
+          </p>
+        </div>
+
+        <!-- Area QCM -->
+        <div id="area-qcm" class="hidden mt-7 pt-6 border-t border-slate-100 space-y-2.5">
+          <span class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Sélectionnez une réponse</span>
+          <div id="qcm-options" class="grid grid-cols-1 gap-2.5"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation Controls -->
+      <div class="flex items-center justify-between gap-3">
+        <button id="btn-prev" onclick="prevQuestion()" class="px-5 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-sm disabled:opacity-40 disabled:pointer-events-none transition-all">
+          ← Précédente
+        </button>
+
+        <button id="btn-next" onclick="nextQuestion()" class="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/15 transition-all">
+          Question suivante →
+        </button>
+
+        <button id="btn-submit-sheet" onclick="finishSheet()" class="hidden px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2">
+          <span>Valider la fiche (10 questions)</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== VUE 3 : RÉSULTATS & CORRECTION ==================== -->
+    <section id="view-results" class="hidden fade-in space-y-6">
+      <!-- Score Banner -->
+      <div class="bg-white rounded-3xl p-6 sm:p-9 border border-slate-100 card-shadow text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
+              Bilan de la <span id="revealed-sheet-title" class="text-blue-600">Fiche N° 1</span>
+              <span id="result-time-badge" class="text-slate-400 font-normal">• 01:45</span>
+            </div>
+            <h2 id="result-headline" class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Excellent travail !
+            </h2>
+            <p id="result-subtext" class="text-sm text-slate-600 max-w-xl">
+              Vérifiez ci-dessous le détail de vos réponses. En mode Tac au tac, vous pouvez ajuster chaque question si vous aviez la bonne réponse à l'oral.
+            </p>
+          </div>
+
+          <!-- Score Circle -->
+          <div class="shrink-0 flex flex-col items-center justify-center w-28 h-28 rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/20">
+            <div class="text-3xl font-extrabold leading-none"><span id="score-value">0</span><span class="text-lg font-semibold opacity-80">/10</span></div>
+            <span class="text-[11px] font-semibold uppercase tracking-wider mt-1.5 opacity-90">Score final</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-7 pt-6 border-t border-slate-100">
+          <button onclick="startRandomSheet()" class="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/15 transition-all">
+            Tirer une autre fiche au hasard →
+          </button>
+          <button onclick="retryCurrentSheet()" class="px-5 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200/70 text-slate-700 font-semibold text-sm transition-all">
+            Recommencer cette fiche
+          </button>
+          <button onclick="goHome()" class="px-4 py-3.5 rounded-2xl text-slate-500 hover:text-slate-800 font-medium text-sm transition-colors">
+            Retour à l'accueil
+          </button>
+        </div>
+      </div>
+
+      <!-- Detailed Correction List -->
+      <div class="space-y-3" id="correction-list"></div>
+    </section>
+
+  </main>
+
+  <!-- Custom Modal (No alert/confirm) -->
+  <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 card-shadow border border-slate-100 fade-in">
+      <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-2">Confirmation</h3>
+      <p id="modal-desc" class="text-sm text-slate-600 mb-6 leading-relaxed">Voulez-vous vraiment quitter cette fiche en cours ?</p>
+      <div class="flex items-center justify-end gap-2.5">
+        <button onclick="closeModal()" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors">Annuler</button>
+        <button id="modal-confirm-btn" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white transition-colors">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="py-6 text-center text-xs text-slate-400">
+    Application d'entraînement • Fiches écrites Permis D (2026) — Hors circulation
+  </footer>
+
+  <script>
+    // =========================================================================
+    // 1. ILLUSTRATION DES PANNEAUX ROUTIERS EN SVG
+    // =========================================================================
+    function getSignSVG(type) {
+      if (!type) return null;
+      const signs = {
+        // Fiche 1 Q5 : C8 Voie de détresse à droite
+        'detresse_droite': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="6" width="88" height="88" rx="10" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="3"/>
+            <rect x="6" y="6" width="88" height="88" rx="10" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+            <!-- Main road vertical -->
+            <rect x="30" y="18" width="12" height="64" fill="#FFFFFF"/>
+            <!-- Escape lane branch right -->
+            <path d="M42 62 L62 42 L68 48 L42 74 Z" fill="#FFFFFF"/>
+            <!-- Red/white checkered escape box -->
+            <rect x="58" y="28" width="10" height="10" fill="#EF4444"/>
+            <rect x="68" y="28" width="10" height="10" fill="#FFFFFF"/>
+            <rect x="58" y="38" width="10" height="10" fill="#FFFFFF"/>
+            <rect x="68" y="38" width="10" height="10" fill="#EF4444"/>
+          </svg>`,
+
+        // Fiche 2 Q3 : B13 Interdiction > 5,5t
+        'interdit_5_5t': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <text x="50" y="57" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="25" fill="#0F172A">5,5 t</text>
+          </svg>`,
+
+        // Fiche 3 Q3 : Présignalisation Déviation 12t à 400m
+        'deviation_12t_400m': `
+          <svg width="130" height="96" viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="132" height="64" rx="6" fill="#FACC15" stroke="#0F172A" stroke-width="2.5"/>
+            <text x="70" y="23" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="13" fill="#0F172A">Déviation</text>
+            <circle cx="70" cy="46" r="16" fill="#FFFFFF" stroke="#DC2626" stroke-width="4"/>
+            <text x="70" y="50" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="10.5" fill="#0F172A">12t</text>
+            <rect x="28" y="72" width="84" height="24" rx="4" fill="#FACC15" stroke="#0F172A" stroke-width="2"/>
+            <text x="70" y="88" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="13" fill="#0F172A">400 m</text>
+          </svg>`,
+
+        // Fiche 4 Q4 : B12 Hauteur limitée 3,5m
+        'hauteur_3_5m': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <polygon points="50,12 43,21 57,21" fill="#0F172A"/>
+            <polygon points="50,88 43,79 57,79" fill="#0F172A"/>
+            <text x="50" y="57" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="22" fill="#0F172A">3,5m</text>
+          </svg>`,
+
+        // Fiche 5 Q3 : C24a Voie réservée aux bus
+        'voie_bus': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="6" width="88" height="88" rx="10" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="3"/>
+            <rect x="6" y="6" width="88" height="88" rx="10" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+            <!-- Bus front icon -->
+            <rect x="28" y="22" width="44" height="46" rx="7" fill="#FFFFFF"/>
+            <rect x="33" y="28" width="34" height="18" rx="2" fill="#1D4ED8"/>
+            <circle cx="36" cy="58" r="3.5" fill="#1D4ED8"/>
+            <circle cx="64" cy="58" r="3.5" fill="#1D4ED8"/>
+            <rect x="33" y="68" width="7" height="6" rx="1" fill="#FFFFFF"/>
+            <rect x="60" y="68" width="7" height="6" rx="1" fill="#FFFFFF"/>
+          </svg>`,
+
+        // Fiche 6 Q2 : C6 Arrêt d'autobus (Panneau carré bleu avec bus de profil / ou panneau arrêt)
+        'arret_bus_faux': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#1D4ED8" stroke="#DC2626" stroke-width="10"/>
+            <line x1="20" y1="20" x2="80" y2="80" stroke="#DC2626" stroke-width="9"/>
+          </svg>`,
+
+        // Fiche 7 Q2 : B9b Interdiction aux véhicules tractant une remorque
+        'interdit_remorque': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <!-- Tractor/Car + Trailer -->
+            <rect x="20" y="42" width="24" height="14" rx="2" fill="#0F172A"/>
+            <rect x="48" y="40" width="32" height="16" rx="2" fill="#0F172A"/>
+            <line x1="44" y1="51" x2="48" y2="51" stroke="#0F172A" stroke-width="3"/>
+            <circle cx="27" cy="58" r="4" fill="#0F172A"/>
+            <circle cx="56" cy="58" r="4" fill="#0F172A"/>
+            <circle cx="72" cy="58" r="4" fill="#0F172A"/>
+          </svg>`,
+
+        // Fiche 8 Q2 : A14 + Panonceau Accotement meuble
+        'accotement_meuble': `
+          <svg width="110" height="112" viewBox="0 0 110 112" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="55,6 100,76 10,76" fill="#FFFFFF" stroke="#DC2626" stroke-width="7" stroke-linejoin="round"/>
+            <text x="55" y="64" text-anchor="middle" font-family="Inter, sans-serif" font-weight="900" font-size="36" fill="#0F172A">!</text>
+            <rect x="10" y="82" width="90" height="26" rx="3" fill="#FFFFFF" stroke="#0F172A" stroke-width="2"/>
+            <text x="55" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="9" fill="#0F172A">ACCOTEMENT</text>
+            <text x="55" y="104" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="9" fill="#0F172A">MEUBLE</text>
+          </svg>`,
+
+        // Fiche 9 Q3 : B3a Interdiction de dépasser pour les poids lourds > 3,5t
+        'interdit_depasser_pl': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <!-- Truck left (red) -->
+            <rect x="22" y="34" width="22" height="24" rx="2" fill="#DC2626"/>
+            <circle cx="27" cy="62" r="3.5" fill="#DC2626"/>
+            <circle cx="39" cy="62" r="3.5" fill="#DC2626"/>
+            <!-- Car right (black) -->
+            <rect x="54" y="42" width="22" height="16" rx="3" fill="#0F172A"/>
+            <circle cx="59" cy="62" r="3.5" fill="#0F172A"/>
+            <circle cx="71" cy="62" r="3.5" fill="#0F172A"/>
+          </svg>`,
+
+        // Fiche 10 Q4 & Fiche 11 Q3 : AB25 Carrefour à sens giratoire
+        'giratoire': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,8 94,84 6,84" fill="#FFFFFF" stroke="#DC2626" stroke-width="8" stroke-linejoin="round"/>
+            <circle cx="50" cy="58" r="14" fill="none" stroke="#0F172A" stroke-width="4.5" stroke-dasharray="18 10"/>
+            <polygon points="50,40 44,47 54,48" fill="#0F172A"/>
+            <polygon points="64,64 57,60 58,70" fill="#0F172A"/>
+            <polygon points="36,64 43,68 42,58" fill="#0F172A"/>
+          </svg>`,
+
+        // Fiche 12 Q2 : B11 Largeur limitée 2,5m
+        'largeur_2_5m': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <polygon points="12,50 21,43 21,57" fill="#0F172A"/>
+            <polygon points="88,50 79,43 79,57" fill="#0F172A"/>
+            <text x="50" y="56" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="21" fill="#0F172A">2,5m</text>
+          </svg>`,
+
+        // Fiche 13 Q4 : B14 70 + panonceau 5,5t
+        'limitation_70_5_5t': `
+          <svg width="96" height="116" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="44" r="38" fill="#FFFFFF" stroke="#DC2626" stroke-width="9"/>
+            <text x="50" y="55" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="30" fill="#0F172A">70</text>
+            <rect x="18" y="88" width="64" height="24" rx="4" fill="#FFFFFF" stroke="#0F172A" stroke-width="2"/>
+            <text x="50" y="105" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="14" fill="#0F172A">5,5 t</text>
+          </svg>`,
+
+        // Fiche 14 Q4 : A14 + Panonceau Arbres inclinés
+        'arbres_inclines': `
+          <svg width="110" height="112" viewBox="0 0 110 112" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="55,6 100,76 10,76" fill="#FFFFFF" stroke="#DC2626" stroke-width="7" stroke-linejoin="round"/>
+            <text x="55" y="64" text-anchor="middle" font-family="Inter, sans-serif" font-weight="900" font-size="36" fill="#0F172A">!</text>
+            <rect x="8" y="82" width="94" height="26" rx="3" fill="#FFFFFF" stroke="#0F172A" stroke-width="2"/>
+            <text x="55" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="9.5" fill="#0F172A">ARBRES</text>
+            <text x="55" y="104" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="9.5" fill="#0F172A">INCLINÉS</text>
+          </svg>`,
+
+        // Fiche 15 Q4 : B14 Limitation 50
+        'limitation_50': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <text x="50" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="34" fill="#0F172A">50</text>
+          </svg>`,
+
+        // Fiche 16 Q3 : B8 Interdiction véhicules transport marchandises
+        'interdit_marchandises': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <!-- Truck side silhouette -->
+            <rect x="22" y="34" width="36" height="22" rx="2" fill="#0F172A"/>
+            <path d="M60 40 L72 40 L76 48 L76 56 L60 56 Z" fill="#0F172A"/>
+            <circle cx="31" cy="60" r="4.5" fill="#0F172A"/>
+            <circle cx="68" cy="60" r="4.5" fill="#0F172A"/>
+          </svg>`,
+
+        // Fiche 17 Q4 : A16 Descente dangereuse 10% + panonceau 4,5 km
+        'descente_10_4_5km': `
+          <svg width="104" height="116" viewBox="0 0 104 120" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="52,6 96,76 8,76" fill="#FFFFFF" stroke="#DC2626" stroke-width="7" stroke-linejoin="round"/>
+            <polygon points="22,68 82,68 22,42" fill="#0F172A"/>
+            <text x="62" y="55" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="13" fill="#0F172A">10%</text>
+            <rect x="16" y="84" width="72" height="24" rx="4" fill="#FFFFFF" stroke="#0F172A" stroke-width="2"/>
+            <text x="52" y="100" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="13" fill="#0F172A">4,5 km</text>
+          </svg>`,
+
+        // Fiche 18 Q3 & Fiche 19 Q9 : B10a Longueur limitée 10m
+        'longueur_10m': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <!-- Truck silhouette -->
+            <rect x="24" y="32" width="36" height="16" rx="1.5" fill="#0F172A"/>
+            <path d="M62 36 L72 36 L75 43 L75 48 L62 48 Z" fill="#0F172A"/>
+            <circle cx="32" cy="51" r="3" fill="#0F172A"/>
+            <circle cx="68" cy="51" r="3" fill="#0F172A"/>
+            <text x="50" y="72" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="17" fill="#0F172A">10 m</text>
+          </svg>`,
+
+        // Fiche 20 Q4 : B11 Largeur limitée 2,3m
+        'largeur_2_3m': `
+          <svg width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#DC2626" stroke-width="10"/>
+            <polygon points="12,50 21,43 21,57" fill="#0F172A"/>
+            <polygon points="88,50 79,43 79,57" fill="#0F172A"/>
+            <text x="50" y="56" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="21" fill="#0F172A">2,3m</text>
+          </svg>`
+      };
+      return signs[type] || null;
+    }
+
+    // =========================================================================
+    // 2. BASE DE DONNÉES COMPLÈTE DES 20 FICHES (200 QUESTIONS + RÉPONSES + QCM)
+    // =========================================================================
+    const FICHES_DATA = [
+      {
+        numero: 1,
+        questions: [
+          {
+            q: "Un chiffre doublé (ex : 33) dans le rectangle du haut de la plaque orange placée à l'arrière d'un camion signifie : « produit de nature à polluer les eaux ». Vrai ou faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Un conducteur qui possède les catégories C et D devra nécessairement effectuer 2 stages de Formation Continue Obligatoire pour pouvoir continuer à conduire des camions et des cars. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Quel document spécifique aux véhicules de transport en commun doit figurer à bord d'un autocar neuf, en plus du certificat d'immatriculation et de l'attestation d'assurance ?",
+            a: "L'attestation d'aménagement",
+            accepted: ["attestation d'amenagement", "attestation amenagement", "amenagement"],
+            choices: ["L'attestation d'aménagement", "La carte violette", "Le carnet de route international", "La feuille de route marchandises"]
+          },
+          {
+            q: "Vous avez perdu votre « carte conducteur », pouvez-vous conduire en utilisant la carte « entreprise » que possède votre employeur ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Ce signal m'annonce-t-il une voie de détresse qui sera située sur ma gauche ?",
+            sign: "detresse_droite",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Le poids réel d'un véhicule peut-il être égal à son PTAC ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous conduisez un autocar neuf de 22 t de PTAC. Par temps de pluie, à quelle vitesse êtes-vous limité sur route prioritaire ?",
+            a: "80 km/h",
+            accepted: ["80", "80 km/h", "80km/h", "80 kmh"],
+            choices: ["70 km/h", "80 km/h", "90 km/h", "100 km/h"]
+          },
+          {
+            q: "Le turbocompresseur a pour fonction de diminuer l'air admis dans les cylindres ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous avez fait une coupure de 4 h (repos), quelle sera, au minimum, la durée de la période de repos suivante pour être en règle vis-à-vis du repos journalier ?",
+            a: "9 h (ou 9 heures)",
+            accepted: ["9", "9h", "9 h", "9 heures"],
+            choices: ["7 heures", "8 heures", "9 heures", "11 heures"]
+          },
+          {
+            q: "En circulation, le fait de freiner désactive obligatoirement le régulateur de vitesse. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          }
+        ]
+      },
+      {
+        numero: 2,
+        questions: [
+          {
+            q: "Quand je circule en Espagne, quel numéro de téléphone est-il conseillé d'utiliser pour appeler les secours à partir d'un portable ?",
+            a: "112",
+            accepted: ["112"],
+            choices: ["112", "15", "18", "911"]
+          },
+          {
+            q: "Âgé de 24 ans, vous venez d'obtenir le permis D et la FIMO voyageur. Pouvez-vous effectuer un trajet Paris - Brest ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Je circule, à vide, avec un véhicule de 5 tonnes de poids à vide et de 15 tonnes de PTAC. À hauteur de ce signal, puis-je passer ?",
+            sign: "interdit_5_5t",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous avez interrompu votre conduite pendant 45 mn. Ce temps peut-il être pris en compte pour le calcul du temps de repos journalier ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Lors d'un contrôle sur route, dois-je présenter un justificatif de l'employeur pour le ou les jour(s) non travaillé(s) ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Comment appelle-t-on un véhicule de transport en commun ne comportant que des places assises ?",
+            a: "Autocar",
+            accepted: ["autocar", "un autocar", "car"],
+            choices: ["Autocar", "Autobus", "Minibus", "Trolleybus"]
+          },
+          {
+            q: "Vous conduisez un véhicule affecté au transport d'enfants. Lors de la montée et de la descente des enfants, est-il obligatoire de mettre les feux de détresse ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Qu'aspire le moteur diesel lors du premier temps appelé « admission » ?",
+            a: "De l'air",
+            accepted: ["air", "de l'air", "l'air"],
+            choices: ["De l'air", "Un mélange air-carburant", "Du gazole pur", "De l'huile pulvérisée"]
+          },
+          {
+            q: "Vous vous arrêtez pour faire le plein de carburant. Sur quel symbole devez-vous positionner le sélecteur d'activité du chronotachygraphe ?",
+            a: "Autres tâches (marteaux)",
+            accepted: ["autres taches", "marteaux", "les marteaux", "taches"],
+            choices: ["Autres tâches (marteaux)", "Disponibilité (carré barré)", "Repos (lit)", "Conduite (volant)"]
+          },
+          {
+            q: "Le chronotachygraphe numérique de votre véhicule tombe en panne. Devez-vous être en mesure de présenter un document justifiant des temps de conduite et de repos ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 3,
+        questions: [
+          {
+            q: "Peut-il y avoir des voyageurs debout à l'étage supérieur d'un autocar à étage ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En cas de récidive de grand excès de vitesse, une suspension du permis de conduire peut être assortie d'un permis limité à la conduite professionnelle (permis blanc) si l'infraction a été commise avec la voiture personnelle du chauffeur. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Cette signalisation de présignalisation peut annoncer une barrière de dégel : vrai ou faux ?",
+            sign: "deviation_12t_400m",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Un temps de conduite de 4 h 30 peut être fractionné, au plus, par combien de pause(s) ?",
+            a: "2",
+            accepted: ["2", "deux"],
+            choices: ["1", "2", "3", "4"]
+          },
+          {
+            q: "Une boîte de premiers secours est-elle obligatoire dans un autocar ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Est-il possible de fixer à l'arrière d'un car de 15 m de long un porte-skis ou un coffre à skis de 70 cm de profondeur ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous conduisez un autocar neuf de plus de 10 t de PTAC, sans passager. À quelle vitesse êtes-vous limité sur route prioritaire ?",
+            a: "80 km/h",
+            accepted: ["80", "80 km/h", "80km/h"],
+            choices: ["70 km/h", "80 km/h", "90 km/h", "100 km/h"]
+          },
+          {
+            q: "Certains éléments de la chaîne cinématique nécessitent d'être vidangés ou ... ?",
+            a: "Graissés",
+            accepted: ["graisses", "graisser", "lubrifies"],
+            choices: ["Graissés", "Purgés à l'eau", "Démontés chaque mois", "Pressurisés"]
+          },
+          {
+            q: "Pendant combien de temps les enregistrements des activités des conducteurs (données numériques ou disques) doivent-ils être conservés dans l'entreprise ?",
+            a: "1 an (ou 12 mois ou 365 jours)",
+            accepted: ["1 an", "un an", "12 mois", "365 jours"],
+            choices: ["28 jours", "6 mois", "1 an (12 mois)", "5 ans"]
+          },
+          {
+            q: "Le circuit électrique alimentant les feux de détresse est-il indépendant du circuit alimentant le coupe-batterie ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 4,
+        questions: [
+          {
+            q: "Les accidents corporels entre un poids lourd et une voiture sont majoritairement des accidents avec des véhicules circulant dans le même sens. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Après l'obtention (hors diplômes professionnels) de votre premier permis de conduire du groupe lourd, quelle formation devez-vous effectuer avant de pouvoir conduire un car dans le cadre d'un transport interurbain de voyageurs ?",
+            a: "FIMO (Formation Initiale Minimale Obligatoire)",
+            accepted: ["fimo", "formation initiale minimale obligatoire"],
+            choices: ["FIMO (Formation Initiale Minimale Obligatoire)", "FCO (Formation Continue Obligatoire)", "ADR Voyageurs", "Attestation de capacité"]
+          },
+          {
+            q: "En double équipage, le temps passé sur la couchette d'un véhicule en circulation est-il considéré comme repos journalier ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Ce signal interdit-il l'accès aux véhicules mesurant plus de 3,50 m de hauteur, chargement compris ?",
+            sign: "hauteur_3_5m",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Une visite technique peut-elle être imposée à un véhicule de transport en commun impliqué dans un accident ayant provoqué la mort ou des blessures graves ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En règle générale, quelle est la longueur maximale autorisée pour un véhicule de transport en commun articulé comportant une articulation ?",
+            a: "18,75 m",
+            accepted: ["18,75", "18.75", "18,75 m", "18,75m"],
+            choices: ["13,50 m", "15,00 m", "18,75 m", "20,00 m"]
+          },
+          {
+            q: "Vous conduisez un autocar neuf de 22 t de PTAC. Par temps de pluie, à quelle vitesse êtes-vous limité sur autoroute ?",
+            a: "100 km/h",
+            accepted: ["100", "100 km/h", "100km/h"],
+            choices: ["80 km/h", "90 km/h", "100 km/h", "110 km/h"]
+          },
+          {
+            q: "Le châssis d'un véhicule lourd est principalement constitué de longerons et de ... ?",
+            a: "Traverses",
+            accepted: ["traverses", "traverse"],
+            choices: ["Traverses", "Biellettes", "Ressorts hélicoïdaux", "Cardans"]
+          },
+          {
+            q: "Vous avez fait une coupure de 2 h, quelle sera, au minimum, la durée (non réduite) de la période de repos que vous devrez prendre à la fin de votre journée de travail pour être en règle vis-à-vis du repos journalier ?",
+            a: "11 h (ou 11 heures)",
+            accepted: ["11", "11h", "11 h", "11 heures"],
+            choices: ["9 heures", "10 heures", "11 heures", "12 heures"]
+          },
+          {
+            q: "Les extincteurs utilisés sur les véhicules lourds doivent être entretenus et vérifiés de manière régulière. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          }
+        ]
+      },
+      {
+        numero: 5,
+        questions: [
+          {
+            q: "Circulant à vide avec un autocar, vous êtes impliqué dans un accident corporel de la circulation. Devez-vous prévenir rapidement votre entreprise ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En France, à partir de quelle quantité d'alcool pur par litre de sang un conducteur de transport en commun encourt-il une sanction ?",
+            a: "0,20 g/l",
+            accepted: ["0,20", "0.20", "0,2", "0.2", "0,20 g/l", "0,2g/l"],
+            choices: ["0,10 g/l", "0,20 g/l", "0,50 g/l", "0,80 g/l"]
+          },
+          {
+            q: "Ce signal peut m'autoriser à emprunter une voie de bus en agglomération, si je réalise un service régulier interurbain. Vrai ou faux ?",
+            sign: "voie_bus",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Quelle est, en dehors de la conduite de nuit, la durée maximale autorisée de conduite continue pour un conducteur de véhicule de transport en commun ?",
+            a: "4 h 30 (ou 4 h 30 mn)",
+            accepted: ["4h30", "4 h 30", "4h30mn", "4 h 30 mn", "4h30m", "270 mn"],
+            choices: ["3 h 00", "4 h 00", "4 h 30", "5 h 00"]
+          },
+          {
+            q: "La licence de transport intérieur permet d'effectuer des transports avec un car de 45 places à condition de rester en France. Vrai ou faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Vous conduisez un autocar comportant un système de climatisation. Quelle peut être sa largeur maximale ?",
+            a: "2,55 m",
+            accepted: ["2,55", "2.55", "2,55 m", "2,55m"],
+            choices: ["2,50 m", "2,55 m", "2,60 m", "2,65 m"]
+          },
+          {
+            q: "Quelle(s) limitation(s) de vitesse est/sont signalée(s) à l'arrière d'un autocar neuf de 26 t de PTAC ?",
+            a: "100 km/h et 90 km/h",
+            accepted: ["100 et 90", "90 et 100", "100 90", "90 100", "100 km/h et 90 km/h", "100"],
+            choices: ["100 km/h et 90 km/h", "80 km/h et 90 km/h", "Uniquement 100 km/h", "70 km/h et 80 km/h"]
+          },
+          {
+            q: "En règle générale, les véhicules lourds utilisent deux batteries de 12 volts montées en ... ?",
+            a: "Série",
+            accepted: ["serie", "en serie"],
+            choices: ["Série", "Parallèle", "Dérivation", "Étoile"]
+          },
+          {
+            q: "Combien de périodes consécutives (1 période = 24 h), un conducteur assurant un transport national occasionnel de personnes peut-il conduire ?",
+            a: "6 (ou 6 périodes)",
+            accepted: ["6", "six", "6 periodes"],
+            choices: ["5 périodes", "6 périodes", "10 périodes", "12 périodes"]
+          },
+          {
+            q: "Dans un autocar neuf, le conducteur doit-il obligatoirement attacher sa ceinture de sécurité ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 6,
+        questions: [
+          {
+            q: "Avec votre véhicule, vous avez détérioré des panneaux de signalisation. Devez-vous obligatoirement le signaler à votre compagnie d'assurance ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Ce signal m'indique un arrêt d'autobus. Vrai ou faux ?",
+            sign: "arret_bus_faux",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "En double équipage, en France, vous êtes assis à côté du conducteur. Votre temps de conduite continue est-il interrompu ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Le contrôle et le remplissage du circuit de refroidissement s'effectuent plutôt moteur chaud ou moteur froid ?",
+            a: "Moteur à froid (ou À froid)",
+            accepted: ["froid", "moteur froid", "moteur a froid", "a froid"],
+            choices: ["Moteur à froid", "Moteur chaud", "Moteur tournant", "Indifféremment"]
+          },
+          {
+            q: "L'attestation d'aménagement doit obligatoirement être à bord du véhicule neuf que vous conduisez. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Quel est le PTAC maximal d'un véhicule isolé de transport en commun comportant 2 essieux ?",
+            a: "19 t",
+            accepted: ["19", "19t", "19 t", "19 tonnes"],
+            choices: ["16 tonnes", "19 tonnes", "26 tonnes", "32 tonnes"]
+          },
+          {
+            q: "Hors agglomération, sur une route à double sens, vous suivez un camion à 70 km/h. Quel intervalle de sécurité minimum devez-vous respecter ?",
+            a: "50 m",
+            accepted: ["50", "50m", "50 m", "50 metres"],
+            choices: ["35 m", "50 m", "70 m", "100 m"]
+          },
+          {
+            q: "Dans un véhicule neuf, les passagers doivent-ils être prévenus de l'obligation d'attacher leur ceinture de sécurité ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Lors d'un voyage organisé, pendant la visite programmée d'un monument, vous attendez vos passagers durant 10 minutes dans votre véhicule. Sur quel symbole devez-vous positionner le sélecteur d'activité du chronotachygraphe ?",
+            a: "Disponibilité (carré barré)",
+            accepted: ["disponibilite", "carre barre", "mise a disposition"],
+            choices: ["Disponibilité (carré barré)", "Autres tâches (marteaux)", "Repos (lit)", "Conduite (volant)"]
+          },
+          {
+            q: "Vous suivez un véhicule dont les dispositifs réfléchissants sont triangulaires. Ce véhicule est probablement un véhicule isolé. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          }
+        ]
+      },
+      {
+        numero: 7,
+        questions: [
+          {
+            q: "Le modèle français de constat amiable peut-il être utilisé dans les autres pays de l'Union européenne ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Les véhicules de transport en commun, tractant une remorque, sont-ils concernés par ce signal ?",
+            sign: "interdit_remorque",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quel symbole devez-vous afficher sur l'écran du chronotachygraphe numérique pendant que vos passagers s'installent dans le véhicule ?",
+            a: "Autres tâches (marteaux)",
+            accepted: ["autres taches", "marteaux", "les marteaux"],
+            choices: ["Autres tâches (marteaux)", "Disponibilité (carré barré)", "Repos (lit)", "Conduite (volant)"]
+          },
+          {
+            q: "Une huile multigrade classée SAE 20 W 40 peut-être utilisée uniquement en hiver ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Lors d'un contrôle des temps de conduite et de repos sur la route, en plus de la journée en cours, sur quelle période devez-vous pouvoir présenter les données ?",
+            a: "56 jours",
+            accepted: ["56", "56 jours", "56j"],
+            choices: ["15 jours", "28 jours", "56 jours", "1 an"]
+          },
+          {
+            q: "Votre véhicule (isolé) de transport en commun comporte 2 essieux. Quelle peut être sa longueur maximale ?",
+            a: "13,50 m",
+            accepted: ["13,50", "13.50", "13,5", "13.5", "13,50 m", "13,50m"],
+            choices: ["12,00 m", "13,50 m", "15,00 m", "18,75 m"]
+          },
+          {
+            q: "Tous les pays de l'Union européenne ont adopté les mêmes limitations de vitesse pour les poids lourds. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Généralement, en rase campagne, dans un véhicule de transport en commun d'enfants, ceux-ci peuvent-ils voyager debout ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Sauf cas d'urgence, quelle est la durée de conduite maximale journalière autorisée en tenant compte des dérogations possibles ?",
+            a: "10 h (ou 10 heures)",
+            accepted: ["10", "10h", "10 h", "10 heures"],
+            choices: ["8 heures", "9 heures", "10 heures", "11 heures"]
+          },
+          {
+            q: "Le principal avantage du système de freinage antibloquant est-il de conserver la maîtrise de la trajectoire du véhicule ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 8,
+        questions: [
+          {
+            q: "Les accidents mortels entre un poids lourd et une voiture sont majoritairement des accidents avec des véhicules circulant dans le même sens. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Par temps sec, ce signal me concerne-t-il ?",
+            sign: "accotement_meuble",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "La réglementation sociale européenne s'applique-t-elle à un conducteur non salarié propriétaire de son véhicule ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Parmi les types de graissage moteur, il existe le graissage par barbotage. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "La date limite de validité de la dernière visite technique est-elle inscrite sur le certificat d'immatriculation du véhicule ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Dans un autocar, quel est le poids moyen forfaitaire d'un voyageur adulte avec ses bagages à main ?",
+            a: "70 kg",
+            accepted: ["70", "70kg", "70 kg"],
+            choices: ["60 kg", "65 kg", "70 kg", "75 kg"]
+          },
+          {
+            q: "En ville, un autocar effectuant un service occasionnel peut-il emprunter une voie réservée aux autobus ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En agglomération, la différence de consommation entre un conducteur calme et un conducteur nerveux peut atteindre 40 %. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Quelle peut-être la durée maximale de l'amplitude de la journée de travail pour un conducteur de transport en commun effectuant un service occasionnel ?",
+            a: "14 h (ou 14 heures)",
+            accepted: ["14", "14h", "14 h", "14 heures"],
+            choices: ["12 heures", "13 heures", "14 heures", "15 heures"]
+          },
+          {
+            q: "En cas de panne du chronotachygraphe, le délai maximal de remise en état, à compter de la panne, est fixé à ... ?",
+            a: "1 semaine (ou 7 jours)",
+            accepted: ["1 semaine", "une semaine", "7 jours", "7j"],
+            choices: ["48 heures", "1 semaine (7 jours)", "15 jours", "1 mois"]
+          }
+        ]
+      },
+      {
+        numero: 9,
+        questions: [
+          {
+            q: "Citez un type d'extincteur couramment utilisé pour éteindre une voiture en flamme.",
+            a: "Poudre, Mousse ou CO2",
+            accepted: ["poudre", "mousse", "co2", "dioxyde de carbone"],
+            choices: ["Poudre (ABC)", "Eau pulvérisée simple", "Sable humide", "Couverture thermique"]
+          },
+          {
+            q: "Débrancher ou modifier les réglages du limiteur de vitesse peut entraîner une suspension du permis de conduire, même s'il n'y a pas eu d'excès de vitesse constaté. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Ce signal interdit le dépassement à tous les véhicules dont le PTAC est supérieur à 3,5 tonnes ?",
+            sign: "interdit_depasser_pl",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Après 2 heures de conduite, quelle est la durée minimale d'un premier arrêt pouvant être pris en compte comme pause ?",
+            a: "15 mn",
+            accepted: ["15", "15mn", "15 mn", "15 minutes", "15m"],
+            choices: ["10 minutes", "15 minutes", "20 minutes", "30 minutes"]
+          },
+          {
+            q: "L'expression « transport en commun d'enfants » désigne le transport de personnes dont l'âge est inférieur à ... ?",
+            a: "18 ans",
+            accepted: ["18", "18 ans"],
+            choices: ["14 ans", "16 ans", "18 ans", "21 ans"]
+          },
+          {
+            q: "Dans le poids moyen forfaitaire d'un voyageur adulte, le poids des bagages à main est-il inclus ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En ville, un conducteur d'autocar effectuant une excursion peut-il emprunter une voie réservée aux autobus ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En principe, le ralentisseur hydraulique est situé sur ... ?",
+            a: "La transmission (ou L'arbre de transmission)",
+            accepted: ["transmission", "la transmission", "arbre de transmission", "l'arbre de transmission", "boite de vitesses"],
+            choices: ["La transmission", "Les tambours de roue", "Le vilebrequin moteur", "L'essieu avant"]
+          },
+          {
+            q: "Pouvez-vous prendre votre temps de repos journalier en couchette lorsque le véhicule est à l'arrêt ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Dans un autocar neuf, les passagers doivent-ils obligatoirement attacher la ceinture de sécurité ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 10,
+        questions: [
+          {
+            q: "Que signifie une plaque de couleur orange, comportant 2 rectangles sans inscription, placée à l'arrière d'un camion ?",
+            a: "Transport de matières dangereuses",
+            accepted: ["matieres dangereuses", "transport de matieres dangereuses", "tmd", "marchandises dangereuses"],
+            choices: ["Transport de matières dangereuses", "Convoi exceptionnel", "Véhicule frigorifique", "Transport d'animaux vivants"]
+          },
+          {
+            q: "En cas d'excès de vitesse de 42 km/h, je pourrai repartir si je reconnais l'infraction ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Les temps de pause sont-ils comptés dans l'amplitude totale de la journée de travail ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En agglomération, ce signal est-il implanté 50 mètres avant le carrefour à sens giratoire ?",
+            sign: "giratoire",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Suite au contrôle technique périodique, quelle lettre figure sur le certificat d'immatriculation lorsque le véhicule est refusé sans interdiction de circuler ?",
+            a: "S (ou La lettre S)",
+            accepted: ["s", "lettre s", "la lettre s"],
+            choices: ["A", "R", "S", "X"]
+          },
+          {
+            q: "Un autobus articulé est-il réglementairement considéré comme un véhicule isolé ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous conduisez un autocar neuf de 19 t. À quelle vitesse êtes-vous limité en agglomération, sur une portion de route relevée à 70 km/h ?",
+            a: "70 km/h",
+            accepted: ["70", "70km/h", "70 km/h"],
+            choices: ["50 km/h", "60 km/h", "70 km/h", "80 km/h"]
+          },
+          {
+            q: "Le dispositif antiblocage de roues (ABS) peut-il fonctionner en même temps que le ou les dispositifs ralentisseurs ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En règle générale, quelle est la durée maximale de conduite journalière autorisée en respectant les temps de repos ?",
+            a: "9 h",
+            accepted: ["9", "9h", "9 h", "9 heures"],
+            choices: ["8 heures", "9 heures", "10 heures", "11 heures"]
+          },
+          {
+            q: "Le circuit électrique alimentant le chronotachygraphe est-il indépendant du circuit alimentant le coupe-batterie ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 11,
+        questions: [
+          {
+            q: "Le modèle allemand, italien ou espagnol d'un constat européen d'accident comporte-t-il les mêmes rubriques que le modèle français ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "À partir de 60 ans, quelle est la périodicité des contrôles médicaux pour les conducteurs de transports en commun ?",
+            a: "1 an (ou Tous les ans ou Annuelle)",
+            accepted: ["1 an", "un an", "tous les ans", "annuelle", "annuel"],
+            choices: ["6 mois", "1 an (tous les ans)", "2 ans", "5 ans"]
+          },
+          {
+            q: "Hors agglomération, ce signal est-il implanté 100 mètres avant le carrefour à sens giratoire ?",
+            sign: "giratoire",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous rentrez chez vous le soir avec l'autocar de l'entreprise. Le matin, le temps de conduite pour vous rendre au collège où vous devez effectuer un transport scolaire est-il compté comme du temps de conduite ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En règle générale, où s'effectuent les visites techniques des véhicules poids lourds ?",
+            a: "Centre de contrôle des véhicules lourds",
+            accepted: ["centre de controle", "vehicules lourds", "centre poids lourds", "centre agree"],
+            choices: ["Centre de contrôle des véhicules lourds", "En préfecture", "À la DREAL uniquement", "Dans n'importe quel centre auto VL"]
+          },
+          {
+            q: "Dans un autobus, quel est le poids moyen forfaitaire d'un voyageur adulte avec ses bagages à main ?",
+            a: "65 kg",
+            accepted: ["65", "65kg", "65 kg"],
+            choices: ["60 kg", "65 kg", "70 kg", "75 kg"]
+          },
+          {
+            q: "Par temps de brouillard sur autoroute, si la visibilité est inférieure à 50 m, quelle est la vitesse maximale autorisée ?",
+            a: "50 km/h",
+            accepted: ["50", "50km/h", "50 km/h"],
+            choices: ["50 km/h", "70 km/h", "80 km/h", "90 km/h"]
+          },
+          {
+            q: "Le circuit de freinage européen rend le freinage de l'essieu avant indépendant du freinage de l'essieu arrière. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "En règle générale, quelle est la durée minimale normale (non réduite) de repos hebdomadaire pour un conducteur d'autocar ?",
+            a: "45 h",
+            accepted: ["45", "45h", "45 h", "45 heures"],
+            choices: ["24 heures", "36 heures", "45 heures", "48 heures"]
+          },
+          {
+            q: "Vous suivez un véhicule dont les dispositifs réfléchissants sont triangulaires. Ce véhicule est probablement un véhicule isolé. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          }
+        ]
+      },
+      {
+        numero: 12,
+        questions: [
+          {
+            q: "En cas d'accident, pouvez-vous demander le témoignage d'un passager de votre autobus ou votre autocar ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Le poids indiqué dans ce signal concerne-t-il le poids maximal autorisé que peut supporter l'essieu ?",
+            sign: "largeur_2_5m",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Lorsque le conducteur serre le frein de parc, le cylindre de frein à ressort se remplit d'air. Vrai ou faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Quel symbole devez-vous afficher sur l'écran du chronotachygraphe numérique lorsque vous nettoyez votre véhicule ?",
+            a: "Autres tâches (marteaux)",
+            accepted: ["autres taches", "marteaux", "les marteaux"],
+            choices: ["Autres tâches (marteaux)", "Disponibilité (carré barré)", "Repos (lit)", "Conduite (volant)"]
+          },
+          {
+            q: "L'attestation d'aménagement doit obligatoirement être à bord du véhicule neuf que vous conduisez. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Quelle charge maximale autorisée peut supporter un essieu isolé ?",
+            a: "13 t",
+            accepted: ["13", "13t", "13 t", "13 tonnes"],
+            choices: ["10 tonnes", "12 tonnes", "13 tonnes", "19 tonnes"]
+          },
+          {
+            q: "Quelle(s) limitation(s) de vitesse est/sont signalée(s) à l'arrière d'un autobus (en exploitation) de 18 t de PTAC ?",
+            a: "70 km/h",
+            accepted: ["70", "70km/h", "70 km/h"],
+            choices: ["50 km/h", "70 km/h", "80 km/h", "90 km/h"]
+          },
+          {
+            q: "Circuler avec un seul pneu lisse ou détérioré n'entraîne pas de contravention si le véhicule possède une roue de secours en bon état. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "En règle générale, quelle est la durée minimale normale (non réduite) obligatoire de repos journalier lorsque celui-ci n'est pas fractionné ?",
+            a: "11 h",
+            accepted: ["11", "11h", "11 h", "11 heures"],
+            choices: ["9 heures", "10 heures", "11 heures", "12 heures"]
+          },
+          {
+            q: "Sur quelles roues jumelées d'un essieu moteur doit-on monter obligatoirement les pneus à crampons : roues intérieures ou roues extérieures ?",
+            a: "Roues intérieures",
+            accepted: ["interieures", "roues interieures", "interieur"],
+            choices: ["Roues intérieures", "Roues extérieures", "Les deux obligatoirement", "Au choix"]
+          }
+        ]
+      },
+      {
+        numero: 13,
+        questions: [
+          {
+            q: "En cas d'accident dans lequel votre véhicule est en cause, les forces de l'ordre peuvent-elles saisir votre carte « conducteur » ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quelle est la catégorie du permis exigée pour conduire un véhicule de transport en commun articulé comportant 60 places ?",
+            a: "D (ou Le permis D)",
+            accepted: ["d", "permis d", "le permis d", "categorie d"],
+            choices: ["Permis D", "Permis DE", "Permis D1", "Permis C"]
+          },
+          {
+            q: "Un conducteur effectuant un transport international régulier de personnes peut-il conduire 7 périodes consécutives (1 période = 24 h) entre 2 repos hebdomadaires ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Mon véhicule a un poids à vide de 5 tonnes et un PTAC de 12 tonnes. Ce signal me concerne-t-il ?",
+            sign: "limitation_70_5_5t",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "La dernière visite technique de votre autocar date de 8 mois. Êtes-vous en infraction en le conduisant ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quel est le PTAC maximal d'un véhicule isolé de transport en commun comportant 3 essieux ?",
+            a: "26 t",
+            accepted: ["26", "26t", "26 t", "26 tonnes"],
+            choices: ["19 tonnes", "24 tonnes", "26 tonnes", "32 tonnes"]
+          },
+          {
+            q: "Sur le périphérique parisien, les cars peuvent circuler à 90 km/h. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Le recreusage des pneumatiques est-il une opération qui peut s'effectuer uniquement par un spécialiste ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quand le repos journalier est fractionné, quelle doit être la durée minimale totale de ce repos ?",
+            a: "12 h (ou 12 heures)",
+            accepted: ["12", "12h", "12 h", "12 heures"],
+            choices: ["9 heures", "10 heures", "11 heures", "12 heures"]
+          },
+          {
+            q: "En règle générale, à quelle vitesse doit être réglé le limiteur de vitesse d'un autocar neuf ?",
+            a: "100 km/h",
+            accepted: ["100", "100km/h", "100 km/h"],
+            choices: ["85 km/h", "90 km/h", "100 km/h", "110 km/h"]
+          }
+        ]
+      },
+      {
+        numero: 14,
+        questions: [
+          {
+            q: "Une plaque orange sans aucune inscription, placée à l'arrière d'un camion signifie qu'il s'agit d'un transport de matières dangereuses circulant à vide. Vrai ou Faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Lors d'un contrôle sur la route, est-il obligatoire de pouvoir présenter votre carte de qualification conducteur (CQC) ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Une carte « conducteur » utilisée dans un chronotachygraphe numérique enregistre-t-elle l'immatriculation du véhicule conduit ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Sur cette chaussée la hauteur des arbres est susceptible d'être inférieure à 4,30 m. Vrai ou faux ?",
+            sign: "arbres_inclines",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Suite au contrôle technique périodique, quelle lettre figure sur le certificat d'immatriculation lorsque le véhicule est refusé avec interdiction de circuler ?",
+            a: "R (ou La lettre R)",
+            accepted: ["r", "lettre r", "la lettre r"],
+            choices: ["A", "R", "S", "I"]
+          },
+          {
+            q: "Quelle est la majoration maximale autorisée du PTAC pour un véhicule équipé d'un dispositif ralentisseur pesant 600 kg ?",
+            a: "500 kg",
+            accepted: ["500", "500kg", "500 kg", "0,5 t"],
+            choices: ["400 kg", "500 kg", "600 kg", "1 000 kg"]
+          },
+          {
+            q: "Sur une autoroute à 4 voies, un autocar d'une longueur totale de 13 m peut-il effectuer un dépassement en empruntant la 3ème voie ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quel type de suspension équipe généralement les véhicules lourds permettant de régler la hauteur du véhicule ?",
+            a: "La suspension pneumatique (ou Pneumatique)",
+            accepted: ["pneumatique", "suspension pneumatique", "a air"],
+            choices: ["La suspension pneumatique", "La suspension à lames métalliques", "La suspension hydraulique simple", "La barre de torsion"]
+          },
+          {
+            q: "L'amplitude de la journée de travail d'un conducteur routier comprend le temps de service et les pauses. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Le circuit électrique alimentant la climatisation est-il indépendant du circuit alimentant le coupe-batterie ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 15,
+        questions: [
+          {
+            q: "Le signal de détresse peut-il remplacer le triangle de présignalisation pour un véhicule d'un PTAC de plus de 3,5 t ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quelle est la catégorie du permis exigée pour conduire un véhicule de transport en commun comportant 45 places circulant à vide ?",
+            a: "D (ou Le permis D)",
+            accepted: ["d", "permis d", "le permis d", "categorie d"],
+            choices: ["Permis D", "Permis D1", "Permis C", "Permis B"]
+          },
+          {
+            q: "Après 4 h 30 de conduite continue, quelle est la durée minimale de la pause que vous devez respecter ?",
+            a: "45 mn",
+            accepted: ["45", "45mn", "45 mn", "45 minutes", "45m"],
+            choices: ["15 minutes", "30 minutes", "45 minutes", "1 heure"]
+          },
+          {
+            q: "Cette limitation de vitesse peut-elle concerner les véhicules autres que les trains routiers, trains doubles et véhicules articulés ?",
+            sign: "limitation_50",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Lors de la visite technique, l'expert vérifie-t-il le fonctionnement de la climatisation ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Vous conduisez un autocar. Quelle peut être sa largeur maximale ?",
+            a: "2,55 m",
+            accepted: ["2,55", "2.55", "2,55 m", "2,55m"],
+            choices: ["2,50 m", "2,55 m", "2,60 m", "2,65 m"]
+          },
+          {
+            q: "Sur une autoroute à 3 voies, un autocar d'une longueur totale de 13 m peut-il effectuer un dépassement en empruntant la 2ème voie ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Le mécanisme de l'assistance de direction comprend une « bielle pendante ». Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Lors d'un transport international occasionnel de personnes, sous conditions, un conducteur peut-il conduire 10 périodes consécutives (1 période = 24 h) entre 2 repos hebdomadaires ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quelle est la périodicité des vérifications techniques obligatoires pour les chronotachygraphes ?",
+            a: "2 ans",
+            accepted: ["2 ans", "deux ans", "24 mois", "tous les 2 ans"],
+            choices: ["6 mois", "1 an", "2 ans", "5 ans"]
+          }
+        ]
+      },
+      {
+        numero: 16,
+        questions: [
+          {
+            q: "Dans une longue descente, en cas de rupture de freins, si j'utilise une voie de détresse, le véhicule que je conduis sera-t-il gravement endommagé ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quelle est la périodicité des Formations Continues Obligatoires des conducteurs routiers ?",
+            a: "5 ans (ou Quinquennale)",
+            accepted: ["5 ans", "cinq ans", "quinquennale", "tous les 5 ans"],
+            choices: ["2 ans", "3 ans", "5 ans", "10 ans"]
+          },
+          {
+            q: "Ce signal concerne-t-il uniquement les véhicules affectés au transport de marchandises excédant 3 500 kg de PTAC ?",
+            sign: "interdit_marchandises",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quelle est la durée de validité de votre carte « conducteur » ?",
+            a: "5 ans",
+            accepted: ["5 ans", "cinq ans"],
+            choices: ["2 ans", "3 ans", "5 ans", "10 ans"]
+          },
+          {
+            q: "Pour un véhicule neuf, quel document devez-vous consulter pour savoir si un accompagnateur est obligatoire lors d'un transport d'enfants ?",
+            a: "L'attestation d'aménagement",
+            accepted: ["attestation d'amenagement", "attestation amenagement", "amenagement"],
+            choices: ["L'attestation d'aménagement", "Le certificat d'immatriculation", "Le livret d'entretien", "L'attestation d'assurance"]
+          },
+          {
+            q: "Quelle est la majoration maximale autorisée du PTAC pour un véhicule équipé d'un dispositif ralentisseur pesant 400 kg ?",
+            a: "400 kg",
+            accepted: ["400", "400kg", "400 kg"],
+            choices: ["300 kg", "400 kg", "500 kg", "600 kg"]
+          },
+          {
+            q: "Un pont dont la hauteur libre est de 5 m (au plus bas) sera obligatoirement signalé par un panneau de hauteur limitée. Vrai ou faux ?",
+            a: "Faux",
+            accepted: ["faux"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Le dispositif antiblocage de roues (ABS) peut-il fonctionner en même temps que le ou les dispositifs ralentisseurs ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Votre véhicule est équipé d'un chronotachygraphe numérique. Vous avez perdu votre carte « conducteur », combien de jours, au maximum, pouvez-vous conduire sans carte ?",
+            a: "15 jours",
+            accepted: ["15", "15 jours", "15j", "quinze jours"],
+            choices: ["7 jours", "15 jours", "28 jours", "Aucun jour (interdit)"]
+          },
+          {
+            q: "Une pierre coincée entre des roues jumelées peut entraîner l'éclatement d'un pneumatique. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          }
+        ]
+      },
+      {
+        numero: 17,
+        questions: [
+          {
+            q: "Peut-il y avoir des voyageurs debout à l'étage inférieur d'un autobus à étage ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Titulaire de la catégorie D et de ma FIMO depuis un an, je suis aujourd'hui âgé de 22 ans et demi. Je suis toujours restreint aux services réguliers dont le parcours de ligne ne dépasse pas 50 km. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Un premier arrêt de 15 mn sur un parking peut-il être considéré comme une pause ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "La descente dangereuse annoncée possède-t-elle un dénivelé de 100 mètres pour chaque kilomètre parcouru ?",
+            sign: "descente_10_4_5km",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quelle est la périodicité des visites techniques auxquelles sont soumis les véhicules de transport en commun ?",
+            a: "6 mois",
+            accepted: ["6 mois", "six mois", "semestrielle", "tous les 6 mois"],
+            choices: ["6 mois", "1 an", "2 ans", "5 ans"]
+          },
+          {
+            q: "En règle générale, quel est le PTAC maximal d'un véhicule isolé de 3 essieux ?",
+            a: "26 t",
+            accepted: ["26", "26t", "26 t", "26 tonnes"],
+            choices: ["19 tonnes", "25 tonnes", "26 tonnes", "32 tonnes"]
+          },
+          {
+            q: "Un véhicule de transport en commun dont le PTAC est de 19 t circulant avec la moitié de ses passagers peut-il emprunter une route où une barrière de dégel à 12 t, avec mention demi-charge autorisée, est en place ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "La marche arrière sert à inverser le sens de rotation de l'arbre de transmission ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Un chauffeur a conduit 20 heures la semaine précédente. Selon la réglementation sociale européenne, combien d'heures maximum peut-il conduire la semaine en cours ?",
+            a: "56 h (ou 56 heures)",
+            accepted: ["56", "56h", "56 h", "56 heures"],
+            choices: ["45 heures", "50 heures", "56 heures", "70 heures"]
+          },
+          {
+            q: "Le principal avantage du système de freinage antibloquant est-il de réduire les distances de freinage ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 18,
+        questions: [
+          {
+            q: "Sur autoroute, en cas d'incident, pour appeler les secours, vaut-il mieux utiliser une borne d'appel ou son téléphone portable ?",
+            a: "La borne d'appel",
+            accepted: ["borne", "borne d'appel", "la borne", "la borne d'appel"],
+            choices: ["La borne d'appel", "Son téléphone portable", "Les deux sont strictement équivalents", "Attendre une patrouille"]
+          },
+          {
+            q: "Si je perds tous les points de mon permis de conduire à la suite d'infractions commises au volant de ma voiture personnelle, pourrai-je continuer à conduire mon car ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Ce signal concerne-t-il uniquement les véhicules isolés ?",
+            sign: "longueur_10m",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Il est possible de conduire un véhicule équipé d'un chronotachygraphe numérique et un véhicule équipé d'un chronotachygraphe à disque le même jour ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Comment appelle-t-on les transports exécutés à titre onéreux pour le compte d'un client ?",
+            a: "Publics (ou Compte d'autrui)",
+            accepted: ["public", "publics", "transport public", "compte d'autrui", "pour compte d'autrui"],
+            choices: ["Publics (compte d'autrui)", "Privés (compte propre)", "Occasionnels uniquement", "Réguliers urbains"]
+          },
+          {
+            q: "Votre véhicule (isolé) de transport en commun comporte 3 essieux. Quelle peut être sa longueur maximale ?",
+            a: "15 m",
+            accepted: ["15", "15m", "15 m", "15 metres"],
+            choices: ["12,00 m", "13,50 m", "15,00 m", "18,75 m"]
+          },
+          {
+            q: "Un véhicule de transport en commun, d'un PTAC de 19 t, peut-il circuler à vide sur une route où une barrière de dégel à 12 t est mise en place ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "L'embrayage est un organe mécanique nécessaire au passage des vitesses sur les seules boîtes mécaniques ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Un chauffeur a conduit 40 heures la semaine précédente. Selon la réglementation sociale européenne, combien d'heures maximum peut-il conduire la semaine en cours ?",
+            a: "50 h (ou 50 heures)",
+            accepted: ["50", "50h", "50 h", "50 heures"],
+            choices: ["40 heures", "45 heures", "50 heures", "56 heures"]
+          },
+          {
+            q: "En circulation, le fait de freiner désactive obligatoirement le régulateur de vitesse. Vrai ou Faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          }
+        ]
+      },
+      {
+        numero: 19,
+        questions: [
+          {
+            q: "En cas d'accident, les données du chronotachygraphe numérique peuvent-elles servir de preuve devant un tribunal ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Âgé de 24 ans, vous venez d'obtenir le permis D et la FIMO voyageur. Avez-vous une restriction de distance maximale de ligne régulière sur laquelle vous êtes autorisé à conduire un autocar de 45 places ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Au bout de combien de jours, au maximum, l'entreprise doit-elle « télécharger » les données de votre carte conducteur ?",
+            a: "28 jours",
+            accepted: ["28", "28 jours", "28j"],
+            choices: ["15 jours", "28 jours", "56 jours", "90 jours"]
+          },
+          {
+            q: "Un conducteur peut-il demander une copie papier des données numériques, liées à son activité, qui sont conservées dans l'entreprise ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Suite au contrôle technique périodique, lorsque le véhicule est refusé sans interdiction de circuler, dans quel délai maximum la contre-visite doit-elle être effectuée pour éviter une visite technique complète ?",
+            a: "1 mois",
+            accepted: ["1 mois", "un mois", "30 jours"],
+            choices: ["15 jours", "1 mois", "2 mois", "6 mois"]
+          },
+          {
+            q: "Dans la définition du poids à vide, les différents réservoirs sont-ils remplis ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Par temps de brouillard sur autoroute, si la visibilité est inférieure à 50 m, quelle est la vitesse maximale autorisée ?",
+            a: "50 km/h",
+            accepted: ["50", "50km/h", "50 km/h"],
+            choices: ["50 km/h", "70 km/h", "80 km/h", "90 km/h"]
+          },
+          {
+            q: "Les filtres à carburant ou filtres principaux sont situés entre la pompe d'alimentation et la pompe d'injection haute pression. Vrai ou faux ?",
+            a: "Vrai",
+            accepted: ["vrai", "oui"],
+            choices: ["Vrai", "Faux"]
+          },
+          {
+            q: "Je circule avec un autocar d'une longueur de 12 m. Ce signal me concerne-t-il ?",
+            sign: "longueur_10m",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Une commande de coupe-circuit est-elle obligatoire sur un véhicule de transport en commun près du poste de conduite ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          }
+        ]
+      },
+      {
+        numero: 20,
+        questions: [
+          {
+            q: "Le constat amiable d'accident peut-il constituer une preuve de responsabilité ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Un diplôme professionnel de conducteur routier donne-t-il par équivalence l'attestation de Formation Initiale Minimale Obligatoire (FIMO) ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "En double équipage, en France, vous êtes assis à côté du conducteur depuis 1 h. Pouvez-vous reprendre le volant ?",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Je circule avec un véhicule mesurant 2,30 m de large. À hauteur de ce signal, puis-je continuer sur cette route ?",
+            sign: "largeur_2_3m",
+            a: "Oui",
+            accepted: ["oui", "vrai"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Suite au contrôle technique périodique, quelle lettre figure sur le certificat d'immatriculation lorsque le véhicule est accepté ?",
+            a: "A (ou La lettre A)",
+            accepted: ["a", "lettre a", "la lettre a"],
+            choices: ["A", "R", "S", "V"]
+          },
+          {
+            q: "Comment appelle-t-on la distance entre l'essieu arrière et l'extrémité arrière du véhicule ?",
+            a: "Porte-à-faux (arrière)",
+            accepted: ["porte-a-faux", "porte a faux", "porte-a-faux arriere", "porte a faux arriere"],
+            choices: ["Porte-à-faux (arrière)", "Empattement", "Voie arrière", "Garde au sol"]
+          },
+          {
+            q: "Vous conduisez un autocar neuf de 19 t de PTAC. À quelle vitesse êtes-vous limité sur autoroute ?",
+            a: "100 km/h",
+            accepted: ["100", "100km/h", "100 km/h"],
+            choices: ["80 km/h", "90 km/h", "100 km/h", "110 km/h"]
+          },
+          {
+            q: "Le circuit d'alimentation d'un moteur diesel se compose, entre autres éléments, de deux pompes : l'une est dite pompe d'injection haute pression, l'autre est dite pompe ... ?",
+            a: "D'alimentation",
+            accepted: ["alimentation", "d'alimentation", "de gavage"],
+            choices: ["D'alimentation", "À vide", "De relevage", "De graissage"]
+          },
+          {
+            q: "Vous avez interrompu votre conduite pendant 1 h 15 mn. Ce temps peut-il être pris en compte pour le calcul du temps de repos journalier ?",
+            a: "Non",
+            accepted: ["non", "faux"],
+            choices: ["Oui", "Non"]
+          },
+          {
+            q: "Quel type d'extincteur faut-il éviter d'utiliser pour éteindre les flammes d'un feu d'hydrocarbure ?",
+            a: "Un extincteur à eau (ou À eau)",
+            accepted: ["eau", "a eau", "extincteur a eau", "un extincteur a eau"],
+            choices: ["Un extincteur à eau", "Un extincteur à poudre ABC", "Un extincteur à mousse", "Un extincteur à CO2"]
+          }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 3. ÉTAT DE L'APPLICATION
+    // =========================================================================
+    const STORAGE_KEY = 'permis_d_2026_completed_sheets';
+
+    let state = {
+      mode: 'tac', // 'tac' | 'qcm'
+      currentFiche: null,
+      questions: [],
+      currentIndex: 0,
+      userAnswers: [],      // string[]
+      qcmShuffled: [],      // string[][]
+      evaluations: [],      // boolean[]
+      timerSeconds: 0,
+      timerInterval: null,
+      completedSheets: []   // number[]
+    };
+
+    // =========================================================================
+    // 4. INITIALISATION & PERSISTANCE
+    // =========================================================================
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) state.completedSheets = parsed;
+        }
+      } catch (e) {
+        state.completedSheets = [];
+      }
+      updateProgressUI();
+    }
+
+    function saveCompletedSheet(num) {
+      if (!state.completedSheets.includes(num)) {
+        state.completedSheets.push(num);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state.completedSheets));
+        } catch (e) {}
+      }
+      updateProgressUI();
+    }
+
+    function updateProgressUI() {
+      const count = state.completedSheets.length;
+      document.getElementById('completed-count').textContent = count;
+      document.getElementById('reset-count').textContent = count;
+      const resetBtn = document.getElementById('btn-reset-history');
+      if (count > 0) {
+        resetBtn.classList.remove('hidden');
+      } else {
+        resetBtn.classList.add('hidden');
+      }
+    }
+
+    function resetHistory() {
+      showModal(
+        "Réinitialiser la progression ?",
+        "Les 20 fiches redeviendront disponibles dans le tirage au sort prioritaire.",
+        () => {
+          state.completedSheets = [];
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+          updateProgressUI();
+          closeModal();
+        }
+      );
+    }
+
+    // =========================================================================
+    // 5. NAVIGATION & SÉLECTION DE MODE
+    // =========================================================================
+    function selectMode(mode) {
+      state.mode = mode;
+      const btnTac = document.getElementById('btn-mode-tac');
+      const btnQcm = document.getElementById('btn-mode-qcm');
+      const badgeTac = document.getElementById('badge-tac');
+      const badgeQcm = document.getElementById('badge-qcm');
+
+      if (mode === 'tac') {
+        btnTac.className = "text-left p-4 sm:p-5 rounded-2xl border-2 border-blue-600 bg-blue-50/40 transition-all relative";
+        btnQcm.className = "text-left p-4 sm:p-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all relative";
+        badgeTac.classList.remove('hidden');
+        badgeQcm.classList.add('hidden');
+      } else {
+        btnQcm.className = "text-left p-4 sm:p-5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/40 transition-all relative";
+        btnTac.className = "text-left p-4 sm:p-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all relative";
+        badgeQcm.classList.remove('hidden');
+        badgeTac.classList.add('hidden');
+      }
+    }
+
+    function switchView(viewId) {
+      ['view-home', 'view-quiz', 'view-results'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(viewId).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goHome() {
+      if (!document.getElementById('view-quiz').classList.contains('hidden')) {
+        confirmQuit();
+        return;
+      }
+      stopTimer();
+      switchView('view-home');
+    }
+
+    function confirmQuit() {
+      showModal(
+        "Quitter la fiche en cours ?",
+        "Votre progression sur cette fiche ne sera pas enregistrée.",
+        () => {
+          stopTimer();
+          closeModal();
+          switchView('view-home');
+        }
+      );
+    }
+
+    // =========================================================================
+    // 6. DÉMARRAGE D'UNE FICHE AU HASARD
+    // =========================================================================
+    function startRandomSheet() {
+      // Prioriser les fiches non encore révisées
+      let available = FICHES_DATA.filter(f => !state.completedSheets.includes(f.numero));
+      if (available.length === 0) {
+        available = FICHES_DATA;
+      }
+      // Éviter de retomber 2 fois de suite sur la même fiche si possible
+      if (available.length > 1 && state.currentFiche) {
+        available = available.filter(f => f.numero !== state.currentFiche.numero);
+      }
+      const chosen = available[Math.floor(Math.random() * available.length)];
+      initQuizWithSheet(chosen);
+    }
+
+    function retryCurrentSheet() {
+      if (state.currentFiche) {
+        initQuizWithSheet(state.currentFiche);
+      }
+    }
+
+    function initQuizWithSheet(fiche) {
+      state.currentFiche = fiche;
+      const shuffleQ = document.getElementById('opt-shuffle-q').checked;
+
+      let qList = fiche.questions.map((item, idx) => ({ ...item, origIndex: idx + 1 }));
+      if (shuffleQ) {
+        qList = shuffleArray(qList);
+      }
+
+      state.questions = qList;
+      state.currentIndex = 0;
+      state.userAnswers = new Array(10).fill('');
+      state.evaluations = new Array(10).fill(false);
+
+      // Préparer les choix QCM mélangés (sauf Vrai/Faux et Oui/Non qui gardent un ordre naturel)
+      state.qcmShuffled = qList.map(item => {
+        if (item.choices.length === 2) return [...item.choices];
+        return shuffleArray([...item.choices]);
+      });
+
+      // Configurer l'en-tête du quiz
+      const pill = document.getElementById('quiz-mode-pill');
+      if (state.mode === 'tac') {
+        pill.textContent = "Mode Tac au tac";
+        pill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700";
+      } else {
+        pill.textContent = "Mode QCM";
+        pill.className = "px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700";
+      }
+
+      // Chronomètre
+      const showTimer = document.getElementById('opt-timer').checked;
+      const timerEl = document.getElementById('timer-display');
+      if (showTimer) {
+        timerEl.classList.remove('hidden');
+      } else {
+        timerEl.classList.add('hidden');
+      }
+      startTimer();
+
+      switchView('view-quiz');
+      renderQuestion();
+    }
+
+    // =========================================================================
+    // 7. AFFICHAGE & INTERACTION PENDANT LES 10 QUESTIONS
+    // =========================================================================
+    function renderQuestion() {
+      const idx = state.currentIndex;
+      const item = state.questions[idx];
+
+      // Progression
+      document.getElementById('q-current-num').textContent = idx + 1;
+      document.getElementById('progress-bar').style.width = `${((idx + 1) / 10) * 100}%`;
+      renderDots();
+
+      // Énoncé
+      document.getElementById('question-text').textContent = item.q;
+
+      // Panneau SVG éventuel
+      const signBox = document.getElementById('sign-container');
+      const svgMarkup = getSignSVG(item.sign);
+      if (svgMarkup) {
+        signBox.innerHTML = svgMarkup;
+        signBox.classList.remove('hidden');
+      } else {
+        signBox.innerHTML = '';
+        signBox.classList.add('hidden');
+      }
+
+      // Zone de réponse selon le mode
+      const areaTac = document.getElementById('area-tac');
+      const areaQcm = document.getElementById('area-qcm');
+
+      if (state.mode === 'tac') {
+        areaTac.classList.remove('hidden');
+        areaQcm.classList.add('hidden');
+
+        const input = document.getElementById('tac-input');
+        input.value = state.userAnswers[idx] || '';
+        updateClearBtn();
+        setTimeout(() => input.focus(), 30);
+      } else {
+        areaTac.classList.add('hidden');
+        areaQcm.classList.remove('hidden');
+
+        const optionsContainer = document.getElementById('qcm-options');
+        const choices = state.qcmShuffled[idx];
+        const selected = state.userAnswers[idx];
+
+        optionsContainer.innerHTML = choices.map((choice, cIdx) => {
+          const isSelected = selected === choice;
+          const letter = String.fromCharCode(65 + cIdx);
+          return `
+            <button
+              type="button"
+              onclick="selectQcmChoice(${cIdx})"
+              class="w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-3.5 ${
+                isSelected
+                  ? 'border-indigo-600 bg-indigo-50/60 text-indigo-950 font-semibold'
+                  : 'border-slate-200 bg-white hover:border-slate-300 text-slate-800 font-medium'
+              }"
+            >
+              <span class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 ${
+                isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'
+              }">${letter}</span>
+              <span class="text-sm sm:text-base">${escapeHtml(choice)}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Boutons Précédent / Suivant / Valider
+      document.getElementById('btn-prev').disabled = idx === 0;
+      const btnNext = document.getElementById('btn-next');
+      const btnSubmit = document.getElementById('btn-submit-sheet');
+
+      if (idx === 9) {
+        btnNext.classList.add('hidden');
+        btnSubmit.classList.remove('hidden');
+      } else {
+        btnNext.classList.remove('hidden');
+        btnSubmit.classList.add('hidden');
+      }
+    }
+
+    function renderDots() {
+      const container = document.getElementById('q-dots');
+      container.innerHTML = state.questions.map((_, i) => {
+        const isCurrent = i === state.currentIndex;
+        const hasAnswer = (state.userAnswers[i] || '').trim().length > 0;
+        let classes = "flex-1 h-2 rounded-full transition-all cursor-pointer ";
+        if (isCurrent) {
+          classes += "bg-blue-600 ring-2 ring-blue-200";
+        } else if (hasAnswer) {
+          classes += "bg-blue-300 hover:bg-blue-400";
+        } else {
+          classes += "bg-slate-200 hover:bg-slate-300";
+        }
+        return `<button type="button" onclick="jumpToQuestion(${i})" title="Question ${i + 1}" class="${classes}"></button>`;
+      }).join('');
+    }
+
+    function saveCurrentTacInput() {
+      if (state.mode === 'tac') {
+        const val = document.getElementById('tac-input').value;
+        state.userAnswers[state.currentIndex] = val;
+      }
+    }
+
+    function selectQcmChoice(choiceIndex) {
+      const choice = state.qcmShuffled[state.currentIndex][choiceIndex];
+      state.userAnswers[state.currentIndex] = choice;
+      renderQuestion();
+    }
+
+    function clearCurrentInput() {
+      const input = document.getElementById('tac-input');
+      input.value = '';
+      state.userAnswers[state.currentIndex] = '';
+      updateClearBtn();
+      renderDots();
+      input.focus();
+    }
+
+    function updateClearBtn() {
+      const val = document.getElementById('tac-input').value;
+      const btn = document.getElementById('btn-clear-input');
+      if (val.length > 0) btn.classList.remove('hidden');
+      else btn.classList.add('hidden');
+    }
+
+    function jumpToQuestion(index) {
+      saveCurrentTacInput();
+      state.currentIndex = index;
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      if (state.currentIndex > 0) {
+        saveCurrentTacInput();
+        state.currentIndex--;
+        renderQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (state.currentIndex < 9) {
+        saveCurrentTacInput();
+        state.currentIndex++;
+        renderQuestion();
+      }
+    }
+
+    // Écouteurs clavier sur le champ Tac au tac
+    document.getElementById('tac-input').addEventListener('input', () => {
+      saveCurrentTacInput();
+      updateClearBtn();
+      renderDots();
+    });
+
+    document.getElementById('tac-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveCurrentTacInput();
+        if (state.currentIndex < 9) {
+          nextQuestion();
+        } else {
+          finishSheet();
+        }
+      }
+    });
+
+    // =========================================================================
+    // 8. ÉVALUATION & BILAN APRÈS 10 QUESTIONS
+    // =========================================================================
+    function normalizeText(str) {
+      return (str || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // retire accents
+        .replace(/['’\-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function evaluateAnswer(questionObj, userRaw) {
+      const userNorm = normalizeText(userRaw);
+      if (!userNorm) return false;
+
+      if (state.mode === 'qcm') {
+        return userRaw === questionObj.a;
+      }
+
+      // Mode Tac au tac : vérification intelligente avec tolérance
+      const officialNorm = normalizeText(questionObj.a);
+      if (userNorm === officialNorm) return true;
+
+      // Vérifier dans la liste des synonymes acceptés
+      for (const acc of questionObj.accepted) {
+        const accNorm = normalizeText(acc);
+        if (userNorm === accNorm) return true;
+        // Tolérance si l'utilisateur a écrit une phrase contenant le mot-clé exact (ex: "c'est faux", "limite a 80 km/h")
+        if (accNorm.length >= 2 && userNorm.split(' ').includes(accNorm)) {
+          // Éviter faux positifs si l'utilisateur écrit "oui ou non"
+          if (!((accNorm === 'oui' && userNorm.includes('non')) || (accNorm === 'non' && userNorm.includes('oui')))) {
+            return true;
+          }
+        }
+      }
+
+      // Tolérance spécifique sur les durées/chiffres (ex: "4h30" vs "4 h 30", "18.75" vs "18,75")
+      const compactUser = userNorm.replace(/\s+/g, '').replace(',', '.');
+      for (const acc of questionObj.accepted) {
+        const compactAcc = normalizeText(acc).replace(/\s+/g, '').replace(',', '.');
+        if (compactUser === compactAcc) return true;
+      }
+
+      return false;
+    }
+
+    function finishSheet() {
+      saveCurrentTacInput();
+      stopTimer();
+
+      // Calcul des évaluations initiales
+      state.evaluations = state.questions.map((qObj, i) => evaluateAnswer(qObj, state.userAnswers[i]));
+
+      // Marquer la fiche comme révisée
+      saveCompletedSheet(state.currentFiche.numero);
+
+      // Afficher le numéro de la fiche uniquement maintenant
+      document.getElementById('revealed-sheet-title').textContent = `Fiche N° ${state.currentFiche.numero}`;
+      document.getElementById('result-time-badge').textContent = `• Temps : ${formatTime(state.timerSeconds)}`;
+
+      renderResults();
+      switchView('view-results');
+    }
+
+    function toggleEvaluation(index) {
+      state.evaluations[index] = !state.evaluations[index];
+      renderResults();
+    }
+
+    function renderResults() {
+      const score = state.evaluations.filter(Boolean).length;
+      document.getElementById('score-value').textContent = score;
+
+      const headline = document.getElementById('result-headline');
+      const subtext = document.getElementById('result-subtext');
+
+      if (score >= 9) {
+        headline.textContent = "Excellente maîtrise !";
+        subtext.textContent = "Vous êtes parfaitement prêt pour l'interrogation écrite le jour de l'examen.";
+      } else if (score >= 7) {
+        headline.textContent = "Bon résultat !";
+        subtext.textContent = "Quelques détails à consolider ci-dessous, mais l'essentiel est acquis.";
+      } else {
+        headline.textContent = "À retravailler";
+        subtext.textContent = "Relisez attentivement les corrections ci-dessous. En mode Tac au tac, vous pouvez aussi ajuster vos réponses orales.";
+      }
+
+      const listEl = document.getElementById('correction-list');
+      listEl.innerHTML = state.questions.map((item, i) => {
+        const isCorrect = state.evaluations[i];
+        const userAns = (state.userAnswers[i] || '').trim();
+        const svgMarkup = getSignSVG(item.sign);
+
+        return `
+          <div class="bg-white rounded-2xl p-5 sm:p-6 border-l-4 ${
+            isCorrect ? 'border-l-emerald-500' : 'border-l-rose-500'
+          } border border-slate-100 card-shadow">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <div class="space-y-3 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg text-xs font-bold ${
+                    isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                  }">${i + 1}</span>
+                  <span class="text-xs font-bold uppercase tracking-wider ${
+                    isCorrect ? 'text-emerald-600' : 'text-rose-600'
+                  }">${isCorrect ? 'Validée' : 'À revoir'}</span>
+                </div>
+
+                <p class="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+                  ${escapeHtml(item.q)}
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Votre réponse</span>
+                    <span class="text-sm font-semibold ${userAns ? (isCorrect ? 'text-emerald-700' : 'text-rose-700') : 'text-slate-400 italic'}">
+                      ${userAns ? escapeHtml(userAns) : 'Réponse orale / Non saisie'}
+                    </span>
+                  </div>
+
+                  <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/70">
+                    <span class="block text-[11px] font-bold uppercase tracking-wider text-emerald-700/70 mb-0.5">Réponse officielle</span>
+                    <span class="text-sm font-bold text-emerald-900">
+                      ${escapeHtml(item.a)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              ${svgMarkup ? `<div class="shrink-0 self-center sm:self-start p-2 bg-slate-50 rounded-xl border border-slate-200/60 scale-90">${svgMarkup}</div>` : ''}
+            </div>
+
+            ${state.mode === 'tac' ? `
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-xs text-slate-400">Auto-évaluation :</span>
+                <button
+                  type="button"
+                  onclick="toggleEvaluation(${i})"
+                  class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
+                    isCorrect
+                      ? 'border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200'
+                      : 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  }"
+                >
+                  ${isCorrect ? 'Marquer comme fausse' : '✓ J\'avais la bonne réponse'}
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 9. UTILITAIRES (CHRONOMÈTRE, MODALE, MÉLANGE)
+    // =========================================================================
+    function startTimer() {
+      stopTimer();
+      state.timerSeconds = 0;
+      document.getElementById('timer-text').textContent = '00:00';
+      state.timerInterval = setInterval(() => {
+        state.timerSeconds++;
+        document.getElementById('timer-text').textContent = formatTime(state.timerSeconds);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showModal(title, desc, onConfirm) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-desc').textContent = desc;
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+      confirmBtn.onclick = onConfirm;
+      document.getElementById('custom-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    // Initialisation au chargement
+    window.addEventListener('DOMContentLoaded', () => {
+      loadProgress();
+      selectMode('tac');
+    });
+  </script>
+</body>
+</html>
